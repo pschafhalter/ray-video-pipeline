@@ -1,46 +1,48 @@
 import numpy as np
+import os
 import ray
+import sys
 import tensorflow as tf
 
-# Avoids import errors in Ray actor
-import os
 module_path = os.path.dirname(os.path.realpath(__file__))
 src_path = os.path.abspath(os.path.join(module_path, os.pardir))
 models_research_path = os.path.join(src_path, "thirdparty/models/research")
-os.environ["PYTHONPATH"] = os.environ.get("PYTHONPATH", "") + os.pathsep + models_research_path
 
-import sys
+# Avoids import errors in Ray actor
+os.environ["PYTHONPATH"] = os.environ.get("PYTHONPATH", "") \
+        + os.pathsep + models_research_path
+
 sys.path.append(models_research_path)
 from thirdparty.models.research.object_detection.utils \
-        import label_map_util, visualization_utils as vis_util
+        import label_map_util   # noqa
 
 
 # TODO: convert these to arguments for ObjectDetector
 CUTOFF_PERCENTAGE = 0.5
 NUM_ENCODING_CLASSES = 13
 CATEGORY_INDEX_TO_ENCODING = {
-        1: 0,   # person -> person
-        2: 1,   # bicycle -> bicycle
-        3: 2,   # car -> car
-        4: 3,   # motorcycle -> motorcycle
-        6: 4,   # bus -> bus
-        7: 5,   # train -> train
-        8: 6,   # truck -> truck
-        9: 7,   # boat -> boat
-        10: 8,  # traffic light -> traffic light
-        11: 9,  # fire hydrant -> fire hydrant
-        13: 10, # stop sign -> stop sign
-        14: 11, # parking meter -> parking meter
-        16: 12, # bird -> animal
-        17: 12, # cat -> animal
-        18: 12, # dog -> animal
-        19: 12, # horse -> animal
-        20: 12, # sheep -> animal
-        21: 12, # cow -> animal
-        22: 12, # elephant -> animal
-        23: 12, # bear -> animal
-        24: 12, # zebra -> animal
-        25: 12, # giraffe -> animal
+        1: 0,       # person -> person
+        2: 1,       # bicycle -> bicycle
+        3: 2,       # car -> car
+        4: 3,       # motorcycle -> motorcycle
+        6: 4,       # bus -> bus
+        7: 5,       # train -> train
+        8: 6,       # truck -> truck
+        9: 7,       # boat -> boat
+        10: 8,      # traffic light -> traffic light
+        11: 9,      # fire hydrant -> fire hydrant
+        13: 10,     # stop sign -> stop sign
+        14: 11,     # parking meter -> parking meter
+        16: 12,     # bird -> animal
+        17: 12,     # cat -> animal
+        18: 12,     # dog -> animal
+        19: 12,     # horse -> animal
+        20: 12,     # sheep -> animal
+        21: 12,     # cow -> animal
+        22: 12,     # elephant -> animal
+        23: 12,     # bear -> animal
+        24: 12,     # zebra -> animal
+        25: 12,     # giraffe -> animal
         }
 
 
@@ -100,7 +102,8 @@ class ObjectDetector:
             image (np.array): 3 channel image.
 
         Returns:
-            np.array: n channel image where n is the number of encoding classes used.
+            np.array: n channel image where n is the number of encoding
+            classes used.
         """
         image = np.copy(image)
         # Expand dimensions since the model expects images to have shape:
@@ -115,8 +118,8 @@ class ObjectDetector:
         classes = np.squeeze(classes).astype(np.uint8)
         scores = np.squeeze(scores)
         # Create one-hot encodings
-        encodings = np.zeros((image.shape[0], image.shape[1], NUM_ENCODING_CLASSES),
-                             dtype=np.uint8)
+        encodings = np.zeros((image.shape[0], image.shape[1],
+                              NUM_ENCODING_CLASSES), dtype=np.uint8)
         for box, cls, score in zip(boxes, classes, scores):
             if score < CUTOFF_PERCENTAGE:
                 break
@@ -126,7 +129,7 @@ class ObjectDetector:
             xmax = int(round(box[3] * image.shape[1]))
 
             idx = CATEGORY_INDEX_TO_ENCODING[cls]
-            if not idx is None:
+            if idx is not None:
                 # Use max + 1 in indexing to include max pixel
                 encodings[ymin:ymax + 1, xmin:xmax + 1, idx] = 1
 
