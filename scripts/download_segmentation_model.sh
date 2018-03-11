@@ -4,7 +4,6 @@ SEG_DIR="data/segmentation"
 mkdir -p $SEG_DIR
 
 (cd $SEG_DIR && \
-  curl -L "https://drive.google.com/uc?id=0B_4LoEXGO1TwZEJyMFhuelhSME0" \
-       -o "drn_d_22_cityscapes.pth"
+  curl -L "https://drive.google.com/uc?id=1K3BPYIpcB0qqWPf_anleTta-BDM92KDX" \
+       -o "drn_d_22_bdd_v1.pth"
 )
-
