@@ -7,6 +7,12 @@ sys.path.append("thirdparty/models/research")
 from thirdparty.models.research.object_detection.utils \
         import label_map_util, visualization_utils as vis_util
 
+# Avoids import errors in Ray actor
+import os
+os.environ["PYTHONPATH"] = os.environ.get("PYTHONPATH", "") + \
+        ":./thirdparty/models/research"
+
+
 # TODO: convert these to arguments for ObjectDetector
 CUTOFF_PERCENTAGE = 0.5
 NUM_ENCODING_CLASSES = 13
@@ -51,8 +57,6 @@ class ObjectDetector:
                 the model can detect.
             num_classes (int): Maximum number of objects the model can detect.
         """
-            
-
         # Load model
         self.detection_graph = tf.Graph()
         with self.detection_graph.as_default():
