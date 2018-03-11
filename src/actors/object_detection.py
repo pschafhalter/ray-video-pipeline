@@ -2,15 +2,17 @@ import numpy as np
 import ray
 import tensorflow as tf
 
-import sys
-sys.path.append("thirdparty/models/research")
-from thirdparty.models.research.object_detection.utils \
-        import label_map_util, visualization_utils as vis_util
-
 # Avoids import errors in Ray actor
 import os
-os.environ["PYTHONPATH"] = os.environ.get("PYTHONPATH", "") + \
-        ":./thirdparty/models/research"
+module_path = os.path.dirname(os.path.realpath(__file__))
+src_path = os.path.abspath(os.path.join(module_path, os.pardir))
+models_research_path = os.path.join(src_path, "thirdparty/models/research")
+os.environ["PYTHONPATH"] = os.environ.get("PYTHONPATH", "") + os.pathsep + models_research_path
+
+import sys
+sys.path.append(models_research_path)
+from thirdparty.models.research.object_detection.utils \
+        import label_map_util, visualization_utils as vis_util
 
 
 # TODO: convert these to arguments for ObjectDetector
@@ -124,7 +126,7 @@ class ObjectDetector:
             xmax = int(round(box[3] * image.shape[1]))
 
             idx = CATEGORY_INDEX_TO_ENCODING[cls]
-            if not index is None:
+            if not idx is None:
                 # Use max + 1 in indexing to include max pixel
                 encodings[ymin:ymax + 1, xmin:xmax + 1, idx] = 1
 
