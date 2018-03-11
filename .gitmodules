@@ -1,6 +1,8 @@
 [submodule "src/thirdparty/models"]
 	path = src/thirdparty/models
 	url = git@github.com:tensorflow/models.git
+  ignore = dirty
 [submodule "src/thirdparty/drn"]
 	path = src/thirdparty/drn
 	url = git@github.com:fyu/drn.git
+  ignore = dirty
